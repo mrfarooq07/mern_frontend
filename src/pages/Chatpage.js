@@ -12,8 +12,17 @@ const Chatpage = () => {
     fetchChats();
   }, []);
 
-  console.log(chats);
-  return <div>12</div>;
+  if (chats.length > 0) {
+    console.log("Here are chat details");
+    console.log(chats);
+    return (
+      <div>
+        {chats.map((chat) => (
+          <div key={chat._id}>{chat.chatName}</div>
+        ))}
+      </div>
+    );
+  }
 };
 
 export default Chatpage;
