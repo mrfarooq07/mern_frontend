@@ -8,15 +8,73 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useToast } from "@chakra-ui/react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState();
-  const [passowrd, setPassowrd] = useState();
+  const [password, setPassowrd] = useState();
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const [loading, setLoading] = useState(false);
-  const handleFormSubmit = () => {
-    setLoading(true);
+  const history = useHistory();
+  const toast = useToast();
+  const handleFormSubmit = async () => {
+    console.log('hi');
+    setLoading(false);
+    if (!email || !password) {
+      toast({
+        title: "All fields are required to proceed",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    } else {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "/api/user/login",
+          {
+            email,
+            password,
+          },
+          config
+        );
+
+        toast({
+          title: "Login successfuly",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+
+        localStorage.setItem("mern_chat_app_login", JSON.stringify(data));
+        setLoading(false);
+        // history.push("/chats");
+      } catch (error) {
+        toast({
+          title: "Error occured",
+          description: error.response.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        console.log(error.response.data.message);
+        setLoading(false);
+      }
+    }
+
+
   };
 
   return (
@@ -24,6 +82,7 @@ const Login = () => {
       <FormControl id="Email" isRequired>
         <FormLabel>Email</FormLabel>
         <Input
+        value={email}
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -33,6 +92,7 @@ const Login = () => {
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
+          value={password}
             type={show ? "text" : "password"}
             placeholder="Enter your password"
             onChange={(e) => setPassowrd(e.target.value)}
