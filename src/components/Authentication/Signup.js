@@ -9,6 +9,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useToast } from "@chakra-ui/react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState();
@@ -18,8 +21,119 @@ const Signup = () => {
   const [picture, setPicture] = useState();
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  const postDetails = (files) => {};
-  const handleFormSubmit = () => {};
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const history = useHistory();
+  const postDetails = async (files) => {
+    setLoading(true);
+    if (files === undefined) {
+      toast({
+        title: "Please select an image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    if (files.type === "image/jpeg" || files.type === "image/png") {
+      const instance = axios.create();
+      const data = new FormData();
+      data.append("file", files);
+      data.append("upload_preset", "mern-chat-app");
+      data.append("cloud_name", "div7woxon");
+
+      await instance
+        .post("https://api.cloudinary.com/v1_1/div7woxon/image/upload/", data)
+        .then((response) => {
+          setPicture(response.data.url.toString());
+          console.log(response.data.url);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      toast({
+        title: "Please select an image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
+
+  const handleFormSubmit = async () => {
+    setLoading(true);
+    if (!name || !email || !passowrd || !confirmPassword) {
+      toast({
+        title: "Please fill out all the fields",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (passowrd !== confirmPassword) {
+      toast({
+        title: "Password & confirm password don't match",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      let password = passowrd;
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/user",
+        {
+          name,
+          email,
+          password,
+          picture,
+        },
+        config
+      );
+
+      toast({
+        title: "Registered successfuly",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      localStorage.setItem("mern_chat_app_registration", JSON.stringify(data));
+      setLoading(false);
+      // history.push("/chats");
+    } catch (error) {
+      toast({
+        title: "Error occured",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      console.log(error.response.data.message);
+      setLoading(false);
+    }
+  };
 
   return (
     <VStack spacing={"5px"}>
@@ -85,6 +199,7 @@ const Signup = () => {
         width={"100%"}
         style={{ marginTop: 15 }}
         onClick={handleFormSubmit}
+        isLoading={loading}
       >
         Sign Up
       </Button>

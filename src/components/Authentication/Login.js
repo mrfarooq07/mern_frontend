@@ -14,7 +14,10 @@ const Login = () => {
   const [passowrd, setPassowrd] = useState();
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  const handleFormSubmit = () => {};
+  const [loading, setLoading] = useState(false);
+  const handleFormSubmit = () => {
+    setLoading(true);
+  };
 
   return (
     <VStack spacing={"5px"}>
@@ -47,6 +50,7 @@ const Login = () => {
         width={"100%"}
         style={{ marginTop: 15 }}
         onClick={handleFormSubmit}
+        isLoading={loading}
       >
         Login
       </Button>
