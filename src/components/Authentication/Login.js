@@ -21,7 +21,7 @@ const Login = () => {
   const history = useHistory();
   const toast = useToast();
   const handleFormSubmit = async () => {
-    console.log('hi');
+    console.log("hi");
     setLoading(false);
     if (!email || !password) {
       toast({
@@ -57,7 +57,7 @@ const Login = () => {
           position: "bottom",
         });
 
-        localStorage.setItem("mern_chat_app_login", JSON.stringify(data));
+        localStorage.setItem("userInfo", JSON.stringify(data));
         setLoading(false);
         // history.push("/chats");
       } catch (error) {
@@ -73,8 +73,6 @@ const Login = () => {
         setLoading(false);
       }
     }
-
-
   };
 
   return (
@@ -82,7 +80,7 @@ const Login = () => {
       <FormControl id="Email" isRequired>
         <FormLabel>Email</FormLabel>
         <Input
-        value={email}
+          value={email}
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -92,7 +90,7 @@ const Login = () => {
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
-          value={password}
+            value={password}
             type={show ? "text" : "password"}
             placeholder="Enter your password"
             onChange={(e) => setPassowrd(e.target.value)}
