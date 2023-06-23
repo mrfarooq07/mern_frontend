@@ -21,7 +21,6 @@ const Login = () => {
   const history = useHistory();
   const toast = useToast();
   const handleFormSubmit = async () => {
-    console.log("hi");
     setLoading(false);
     if (!email || !password) {
       toast({
@@ -59,7 +58,7 @@ const Login = () => {
 
         localStorage.setItem("userInfo", JSON.stringify(data));
         setLoading(false);
-        // history.push("/chats");
+        history.push("/chats");
       } catch (error) {
         toast({
           title: "Error occured",

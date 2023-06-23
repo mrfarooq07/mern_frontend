@@ -13,10 +13,10 @@ const ChatProvider = ({ children }) => {
     if (!userInfo) {
       history.push("/");
     }
-  }, [history]);
+  }, []);
 
   return (
-    <ChatContext.Provider value={(user, setUser)}>
+    <ChatContext.Provider value={{ user, setUser }}>
       {children}
     </ChatContext.Provider>
   );
