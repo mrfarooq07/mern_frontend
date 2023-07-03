@@ -13,6 +13,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  // Spinner,
   Text,
   Tooltip,
   useToast,
@@ -26,21 +27,19 @@ import { useHistory } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/hooks";
 import axios from "axios";
 import ChatLoading from "../ChatLoading";
+import UserListItem from "../UserAvatar/UserListItem";
+import { Spinner } from "@chakra-ui/spinner";
 export const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState();
-  const user = ChatState();
+  const { user, setSelectedChat, chats, setChats } = ChatState();
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
-  if (typeof user.user !== "undefined") {
-    // console.log("Hello", user, user.user);
-  }
-
-  var userInfo = user.user;
+  var userInfo = user;
   if (userInfo !== undefined) {
     const logoutHandler = () => {
       localStorage.removeItem("userInfo");
@@ -81,7 +80,32 @@ export const SideDrawer = () => {
       }
     };
 
-    const accessChat = (userId) => {};
+    const accessChat = async (userId) => {
+      try {
+        setLoadingChat(true);
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        };
+
+        const { data } = await axios.post("/api/chat", { userId }, config);
+        if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+        setSelectedChat(data);
+        setLoadingChat(false);
+        onClose();
+      } catch (error) {
+        toast({
+          title: "Error fetching the chat",
+          description: error.message,
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+          position: "bottom-left",
+        });
+      }
+    };
 
     return (
       <>
@@ -120,8 +144,8 @@ export const SideDrawer = () => {
                 <Avatar
                   size={"sm"}
                   cursor={"pointer"}
-                  name={userInfo.name}
-                  src={userInfo.pic}
+                  name={userInfo && userInfo.name}
+                  src={userInfo && userInfo.pic}
                 ></Avatar>
               </MenuButton>
               <MenuList>
@@ -159,6 +183,9 @@ export const SideDrawer = () => {
                     handleFunction={() => accessChat(userData._id)}
                   />
                 ))
+              )}
+              {loadingChat && (
+                <Spinner ml={"auto"} display={"flex"} color="black" />
               )}
             </DrawerBody>
           </DrawerContent>
