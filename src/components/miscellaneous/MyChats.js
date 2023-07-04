@@ -12,9 +12,8 @@ export const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
   const toast = useToast();
-  console.log("This is some text", user);
   const UserInfo = JSON.parse(localStorage.getItem("userInfo"));
-  console.log(UserInfo.token, "UserInfo");
+
   const fetchChats = async () => {
     try {
       const config = {
