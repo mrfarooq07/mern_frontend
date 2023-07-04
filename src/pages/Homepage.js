@@ -11,17 +11,19 @@ import {
 import React, { useEffect } from "react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
 
 const Homepage = () => {
   const history = useHistory();
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (userInfo) {
-      history.push("/chats");
-    }
-  }, [history]);
+  if (userInfo !== null) {
+    history.push("/chats");
+    console.log(userInfo, "userInfo");
+  }
+  // useEffect(() => {
+
+  // }, []);
   return (
     <Container maxH="xl" centerContent>
       <Box

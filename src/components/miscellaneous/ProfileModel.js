@@ -51,7 +51,7 @@ const ProfileModel = ({ user, children }) => {
               <Image
                 borderRadius={"full"}
                 boxSize={"150px"}
-                src={user.pic}
+                src={!user.picture ? user.pic : user.picture}
                 alt={user.name}
               />
               <Text>Email: {user.email}</Text>

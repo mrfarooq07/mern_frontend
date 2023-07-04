@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const ChatContext = createContext();
 const ChatProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState("");
   const [selectedChat, setSelectedChat] = useState();
   const [chats, setChats] = useState([]);
   const history = useHistory();
@@ -17,12 +17,14 @@ const ChatProvider = ({ children }) => {
     }
   }, []);
 
-  return (
+  return user != "" ? (
     <ChatContext.Provider
       value={{ user, setUser, selectedChat, setSelectedChat, chats, setChats }}
     >
       {children}
     </ChatContext.Provider>
+  ) : (
+    ""
   );
 };
 
