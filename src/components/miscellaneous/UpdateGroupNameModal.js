@@ -22,7 +22,7 @@ import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 import axios from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
 
-const UpdateGroupNameModal = ({ fetchAgain, setFetchAgain }) => {
+const UpdateGroupNameModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { selectedChat, setSelectedChat, user } = ChatState();
   const [groupChatName, setGroupChatName] = useState();
@@ -70,6 +70,7 @@ const UpdateGroupNameModal = ({ fetchAgain, setFetchAgain }) => {
         : setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setLoading(false);
+      fetchMessages();
     } catch (error) {
       toast({
         title: "There is some issue ",
